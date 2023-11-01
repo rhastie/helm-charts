@@ -1,5 +1,17 @@
 apiVersion: v1
 entries:
+  nmos-cpp-node:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2023-11-01T21:26:48.84295762Z"
+    description: Helm chart for deployment of nmos-cpp in "Virtual-Node" mode using
+      the container image on Docker Hub
+    digest: 3b428e1cbe5442de00990b18ea2416b39f7b8eea45657ea686ce66a6e93b58a7
+    name: nmos-cpp-node
+    type: application
+    urls:
+    - https://github.com/rhastie/helm-charts/releases/download/nmos-cpp-node-0.1.0/nmos-cpp-node-0.1.0.tgz
+    version: 0.1.0
   nmos-cpp-registry:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -11,4 +23,4 @@ entries:
     urls:
     - https://github.com/rhastie/helm-charts/releases/download/nmos-cpp-registry-0.1.0/nmos-cpp-registry-0.1.0.tgz
     version: 0.1.0
-generated: "2023-11-01T20:53:44.590437501Z"
+generated: "2023-11-01T21:26:48.84296442Z"

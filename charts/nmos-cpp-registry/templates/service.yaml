@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nmos-cpp-registry.fullname" . }}
+  labels:
+    {{- include "nmos-cpp-registry.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    {{- range .Values.service.ports }}
+    - port: {{ .port }}
+      targetPort: {{ .targetPort }}
+      protocol: {{ .protocol }}
+      name: {{ .name }}
+    {{- end }}
+  externalIPs:
+    {{- toYaml .Values.service.externalIPs | nindent 4 }}
+  selector:
+    {{- include "nmos-cpp-registry.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,82 @@
+{{- range .Values.NodeConfig }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nmos-cpp-node.fullname" $ }}-{{ .label }}
+  labels:
+    {{- include "nmos-cpp-node.labels" $ | nindent 4 }}
+spec:
+  {{- if not $.Values.autoscaling.enabled }}
+  replicas: {{ $.Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+#      {{- include "nmos-cpp-node.selectorLabels" $ | nindent 6 }}
+      app.kubernetes.io/selector-label: {{ .label }}
+  template:
+    metadata:
+      {{- with $.Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+#        {{- include "nmos-cpp-node.selectorLabels" $ | nindent 8 }}
+        app.kubernetes.io/selector-label: {{ .label }}
+    spec:
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "nmos-cpp-node.serviceAccountName" $ }}
+      securityContext:
+        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ $.Chart.Name }}
+          securityContext:
+            {{- toYaml $.Values.securityContext | nindent 12 }}
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .http_port }}
+              protocol: TCP
+          volumeMounts:
+            - name: config-node
+              mountPath: /home/node.json
+              subPath: node.json
+          env:
+            - name: RUN_NODE
+              value: "TRUE"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: {{ $.Values.probe.initdelay }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: {{ $.Values.probe.initdelay }}
+          resources:
+            {{- toYaml $.Values.resources | nindent 12 }}
+      volumes:
+        - name: config-node
+          configMap:
+            name: {{ $.Release.Name }}-configmap-{{ .label }}
+            items:
+              - key: node.json
+                path: node.json
+      {{- with $.Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $.Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $.Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+{{- end }}

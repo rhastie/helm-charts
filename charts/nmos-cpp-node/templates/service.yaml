@@ -1,0 +1,21 @@
+{{- range .Values.NodeConfig }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nmos-cpp-node.fullname" $ }}-{{ .label }}
+  labels:
+    {{- include "nmos-cpp-node.labels" $ | nindent 4 }}
+spec:
+  type: {{ $.Values.service.type }}
+  ports:
+    - port: {{ .http_port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+#    {{- include "nmos-cpp-node.selectorLabels" $ | nindent 4 }}
+    app.kubernetes.io/selector-label: {{ .label }}
+  externalIPs:
+    {{- toYaml $.Values.service.externalIPs | nindent 4 }}
+---
+{{- end}}

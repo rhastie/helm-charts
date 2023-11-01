@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 0.1.0
+description: Helm chart for deployment of nmos-cpp in "Virtual-Node" mode using the container image on Docker Hub
+name: nmos-cpp-node3
+type: application
+version: 0.1.0

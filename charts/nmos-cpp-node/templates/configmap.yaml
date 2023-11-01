@@ -1,0 +1,10 @@
+{{- range .Values.NodeConfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $.Release.Name }}-configmap-{{ .label }}
+data:
+  node.json: |
+    {{ . | toJson }}
+---
+{{- end}}
